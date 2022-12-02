@@ -9,13 +9,13 @@ import (
 
 func (d days) Day1() {
 
-	readFile, err := os.Open("sources/day1")
+	file, err := os.Open("sources/day1")
 	if err != nil {
 		panic(err)
 	}
-	defer readFile.Close()
+	defer file.Close()
 
-	fs := bufio.NewScanner(readFile)
+	fs := bufio.NewScanner(file)
 	fs.Split(bufio.ScanLines)
 
 	calories := map[int]int{}
