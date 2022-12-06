@@ -8,7 +8,8 @@ $ go run *.go Day<X>
 
 Example:
 ```
-$ go run *.go Day1                                                                                                                                            ok 
-Day1 called
-Top elf (sum of calories): <hidden>, Top 3 elves (sum of calories): <hidden>
+$ go run main.go 1                                                                                                                          ok 
+Day 1 called
+(Part 1) Top elf (sum of calories): <hidden>
+(Part 2) Top 3 elves (sum of calories): <hidden>
 ```

@@ -1,9 +1,9 @@
-package main
+package days
 
 import (
 	"bufio"
 	"fmt"
-	"os"
+	"io"
 	"regexp"
 	"strconv"
 	"strings"
@@ -27,50 +27,41 @@ func (s stack) Reverse() stack {
 	return s
 }
 
-func (d days) Day5() {
-	// Part1
-	file, err := os.Open("sources/day5")
-	if err != nil {
-		panic(err)
+var parseCrates = func(line string, stacks []stack) []stack {
+	parseCrateName := func(s []string) string {
+		r := []rune(s[1])
+		if r[0] >= 65 && r[0] <= 90 {
+			return string(r[0])
+		}
+		return ""
 	}
-	defer file.Close()
 
-	fs := bufio.NewScanner(file)
-	fs.Split(bufio.ScanLines)
-
-	parseCrates := func(line string, stacks []stack) []stack {
-		parseCrateName := func(s []string) string {
-			r := []rune(s[1])
-			if r[0] >= 65 && r[0] <= 90 {
-				return string(r[0])
+	crate := make([]string, 0, 3)
+	i := 0
+	crateCompleted := false
+	for _, r := range strings.Split(line, "") {
+		if crateCompleted {
+			//skip empty spaces beween crates
+			crateCompleted = false
+			continue
+		}
+		crate = append(crate, r)
+		if len(crate) == 3 {
+			// analyze crate name
+			crateName := parseCrateName(crate)
+			if crateName != "" {
+				stacks[i] = stacks[i].Push(crateName)
 			}
-			return ""
+			i += 1
+			crate = make([]string, 0, 3)
+			crateCompleted = true
 		}
 
-		crate := make([]string, 0, 3)
-		i := 0
-		crateCompleted := false
-		for _, r := range strings.Split(line, "") {
-			if crateCompleted {
-				//skip empty spaces beween crates
-				crateCompleted = false
-				continue
-			}
-			crate = append(crate, r)
-			if len(crate) == 3 {
-				// analyze crate name
-				crateName := parseCrateName(crate)
-				if crateName != "" {
-					stacks[i] = stacks[i].Push(crateName)
-				}
-				i += 1
-				crate = make([]string, 0, 3)
-				crateCompleted = true
-			}
-
-		}
-		return stacks
 	}
+	return stacks
+}
+
+func (d Days) Day5p1(source io.Reader) string {
 
 	moveCrate := func(stacks []stack, from, to int) []stack {
 		stack, item := stacks[from].Pop()
@@ -81,6 +72,8 @@ func (d days) Day5() {
 
 	stacks := make([]stack, 9)
 	stacksCompleted := false
+
+	fs := bufio.NewScanner(source)
 	for fs.Scan() {
 		// parse stacks of crates
 		if fs.Text() != "" && !stacksCompleted {
@@ -125,18 +118,11 @@ func (d days) Day5() {
 		_, head := s.Pop()
 		heads += head
 	}
-	fmt.Printf("Stacks head (part 1): %s\n", heads)
+	fmt.Printf("(Part 1) Stacks head: %s\n", heads)
+	return heads
+}
 
-	// Part2
-	file, err = os.Open("sources/day5")
-	if err != nil {
-		panic(err)
-	}
-	defer file.Close()
-
-	fs = bufio.NewScanner(file)
-	fs.Split(bufio.ScanLines)
-
+func (d Days) Day5p2(source io.Reader) string {
 	moveCrates := func(stacks []stack, count, from, to int) []stack {
 		crates := stack{}
 		// extract required crates
@@ -164,8 +150,10 @@ func (d days) Day5() {
 		return stacks
 	}
 
-	stacks = make([]stack, 9)
-	stacksCompleted = false
+	stacks := make([]stack, 9)
+	stacksCompleted := false
+
+	fs := bufio.NewScanner(source)
 	for fs.Scan() {
 		// parse stacks of crates
 		if fs.Text() != "" && !stacksCompleted {
@@ -199,10 +187,11 @@ func (d days) Day5() {
 
 	}
 	// dump stack heads
-	heads = ""
+	heads := ""
 	for _, s := range stacks {
 		_, head := s.Pop()
 		heads += head
 	}
-	fmt.Printf("Stacks head (part 2): %s\n", heads)
+	fmt.Printf("(Part 2) Stacks head: %s\n", heads)
+	return heads
 }

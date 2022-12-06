@@ -1,24 +1,26 @@
-package main
+package days
 
 import (
 	"bufio"
 	"fmt"
-	"os"
+	"io"
 	"strings"
 )
 
-func (d days) Day3() {
-
-	file, err := os.Open("sources/day3")
-	if err != nil {
-		panic(err)
+var findScore = func(s string) int {
+	r := []rune(s)
+	if len(r) > 1 {
+		panic("something went wrong")
 	}
-	defer file.Close()
+	if r[0] >= 97 && r[0] <= 122 {
+		return int(r[0]) - 97 + 1
+	} else if r[0] >= 65 && r[0] <= 90 {
+		return int(r[0]) - 65 + 27
+	}
+	return 0
+}
 
-	fs := bufio.NewScanner(file)
-	fs.Split(bufio.ScanLines)
-
-	// Part 1
+func (d Days) Day3p1(source io.Reader) int {
 	findBadItems := func(p1, p2 []string) []string {
 		contains := func(ss []string, s string) bool {
 			for _, i := range ss {
@@ -42,20 +44,8 @@ func (d days) Day3() {
 		return res
 	}
 
-	findScore := func(s string) int {
-		r := []rune(s)
-		if len(r) > 1 {
-			panic("something went wrong")
-		}
-		if r[0] >= 97 && r[0] <= 122 {
-			return int(r[0]) - 97 + 1
-		} else if r[0] >= 65 && r[0] <= 90 {
-			return int(r[0]) - 65 + 27
-		}
-		return 0
-	}
-
 	score := 0
+	fs := bufio.NewScanner(source)
 	for fs.Scan() {
 		line := fs.Text()
 		split := strings.Split(line, "")
@@ -66,17 +56,10 @@ func (d days) Day3() {
 		}
 	}
 	fmt.Printf("Score (part 1): %d\n", score)
+	return score
+}
 
-	// Part 2
-	file, err = os.Open("sources/day3")
-	if err != nil {
-		panic(err)
-	}
-	defer file.Close()
-
-	fs = bufio.NewScanner(file)
-	fs.Split(bufio.ScanLines)
-
+func (d Days) Day3p2(source io.Reader) int {
 	getGroupBadge := func(group []string) string {
 		badges := map[string]int{}
 		for _, g := range group {
@@ -98,8 +81,9 @@ func (d days) Day3() {
 		return ""
 	}
 
-	score = 0
+	score := 0
 	group := make([]string, 0, 3)
+	fs := bufio.NewScanner(source)
 	for fs.Scan() {
 		group = append(group, fs.Text())
 		if len(group) == 3 {
@@ -109,4 +93,5 @@ func (d days) Day3() {
 		}
 	}
 	fmt.Printf("Score (part 2): %d\n", score)
+	return score
 }
