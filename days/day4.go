@@ -1,24 +1,14 @@
-package main
+package days
 
 import (
 	"bufio"
 	"fmt"
-	"os"
+	"io"
 	"strconv"
 	"strings"
 )
 
-func (d days) Day4() {
-	// Part1
-	file, err := os.Open("sources/day4")
-	if err != nil {
-		panic(err)
-	}
-	defer file.Close()
-
-	fs := bufio.NewScanner(file)
-	fs.Split(bufio.ScanLines)
-
+func (d Days) Day4p1(source io.Reader) int {
 	fullOverlap := func(s string) bool {
 		getRange := func(r string) (int, int) {
 			split := strings.Split(r, "-")
@@ -49,23 +39,17 @@ func (d days) Day4() {
 	}
 
 	count := 0
+	fs := bufio.NewScanner(source)
 	for fs.Scan() {
 		if fullOverlap(fs.Text()) {
 			count += 1
 		}
 	}
 	fmt.Printf("Count (part 1): %d\n", count)
+	return count
+}
 
-	// Part2
-	file, err = os.Open("sources/day4")
-	if err != nil {
-		panic(err)
-	}
-	defer file.Close()
-
-	fs = bufio.NewScanner(file)
-	fs.Split(bufio.ScanLines)
-
+func (d Days) Day4p2(source io.Reader) int {
 	partialOverlap := func(s string) bool {
 		getRange := func(r string) (int, int) {
 			split := strings.Split(r, "-")
@@ -95,11 +79,13 @@ func (d days) Day4() {
 		return false
 	}
 
-	count = 0
+	count := 0
+	fs := bufio.NewScanner(source)
 	for fs.Scan() {
 		if partialOverlap(fs.Text()) {
 			count += 1
 		}
 	}
 	fmt.Printf("Count (part 2): %d\n", count)
+	return count
 }
